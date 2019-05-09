@@ -11,7 +11,7 @@
       <meta http-equiv="x-ua-compatible" content="ie=edge">
       
       
-        <link rel="canonical" href="http://moonso.github.io/loqusdb/user-guide/">
+        <link rel="canonical" href="http://moonso.github.io/loqusdb/user-guide/annotating/">
       
       
         <meta name="author" content="Måns Magnusson and Jesper Eisfeldt">
@@ -35,18 +35,18 @@
       
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
-      <link rel="shortcut icon" href="../assets/images/favicon.png">
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-3.0.4">
     
     
       
-        <title>loqusdb documentation</title>
+        <title>Annotating variants - loqusdb documentation</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application.451f80e5.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/application.451f80e5.css">
       
-        <link rel="stylesheet" href="../assets/stylesheets/application-palette.22915126.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/application-palette.22915126.css">
       
       
         
@@ -55,7 +55,7 @@
       
     
     
-      <script src="../assets/javascripts/modernizr.1aa3b519.js"></script>
+      <script src="../../assets/javascripts/modernizr.1aa3b519.js"></script>
     
     
       
@@ -64,7 +64,7 @@
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
-    <link rel="stylesheet" href="../assets/fonts/material-icons.css">
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
     
     
   </head>
@@ -102,7 +102,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="../#loqusdb-user-guide" tabindex="1" class="md-skip">
+      <a href="../../#annotating-variants" tabindex="1" class="md-skip">
         Skip to content
       </a>
     
@@ -128,7 +128,7 @@
                 loqusdb documentation
               </span>
               <span class="md-header-nav__topic">
-                User Guide
+                Annotating variants
               </span>
             
           
@@ -245,7 +245,7 @@
 
 
   <li class="md-nav__item">
-    <a href=".." title="Home" class="md-nav__link">
+    <a href="../.." title="Home" class="md-nav__link">
       Home
     </a>
   </li>
@@ -255,62 +255,11 @@
       
       
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
-      
-    
-    
-      <label class="md-nav__link md-nav__link--active" for="__toc">
-        User Guide
-      </label>
-    
-    <a href="./" title="User Guide" class="md-nav__link md-nav__link--active">
+  <li class="md-nav__item">
+    <a href="../" title="User Guide" class="md-nav__link">
       User Guide
     </a>
-    
-      
-<nav class="md-nav md-nav--secondary">
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">Table of contents</label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#observations" title="Observations" class="md-nav__link">
-    Observations
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#counting-observations" title="Counting observations" class="md-nav__link">
-    Counting observations
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-      
-      
-      
-      
-    </ul>
-  
-</nav>
-    
   </li>
 
     
@@ -320,7 +269,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../admin-guide/" title="Admin Guide" class="md-nav__link">
+    <a href="../../admin-guide/" title="Admin Guide" class="md-nav__link">
       Admin Guide
     </a>
   </li>
@@ -343,35 +292,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">Table of contents</label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#observations" title="Observations" class="md-nav__link">
-    Observations
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#counting-observations" title="Counting observations" class="md-nav__link">
-    Counting observations
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-      
-      
-      
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -382,31 +302,20 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/moonso/loqusdb/edit/master/docs/user-guide/README.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                  <a href="https://github.com/moonso/loqusdb/edit/master/docs/user-guide/annotating.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                <h1 id="loqusdb-user-guide">loqusdb user guide</h1>
-<p>loqusdb is a tool to store and query snv/indel and sv variants on a large scale.
-It can be continuously updated with information and queried with positions or regions.</p>
-<h2 id="observations">Observations</h2>
-<p>As mentioned loqusdb is not a frequency database that keeps track of all alleles observed in a population.
-Instead loqusdb is used to keep track of what variants that have been observed, in what state they
-where observed and in what individuals or families they where observed.
-loqusdb was developed to aid in rare variant analysies and therefore information about single variants
-are extremely important. If for example there is a potentially disease causing variant in a patient
-we could ask loqusdb if it has been observed before, if loqusdb then tells us that it has been observed in a
-homozygous state 2 times before we could either exclude the variant or solve 2 more cases.</p>
-<h3 id="counting-observations">Counting observations</h3>
-<p>Variants are only counted once per family, regardless of how many individuals it was observed in.
-This is to avoid the situation where a large family could have a great impact on a rare variant.</p>
-<ul>
-<li><a href="usage/">Usage</a></li>
-<li><a href="loading/">Loading</a></li>
-<li><a href="deleting/">Deleting</a></li>
-<li><a href="exporting/">Exporting</a></li>
-<li><a href="annotating/">Annotating</a></li>
-<li><a href="profiling/">Profiling</a></li>
-</ul>
+                <h1 id="annotating-variants">Annotating variants</h1>
+<p>Loqusdb can annotate a VCF with observations from an instance.</p>
+<p>Use command:</p>
+<pre><code class="bash">Usage: loqusdb annotate [OPTIONS] &lt;vcf_file&gt;
+
+  Annotate the variants in a VCF
+
+Options:
+  --sv
+  --help  Show this message and exit.
+</code></pre>
                 
                   
                 
@@ -423,41 +332,6 @@ This is to avoid the situation where a large family could have a great impact on
       
         
 <footer class="md-footer">
-  
-    <div class="md-footer-nav">
-      <nav class="md-footer-nav__inner md-grid">
-        
-          <a href=".." title="Home" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
-            <div class="md-flex__cell md-flex__cell--shrink">
-              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
-            </div>
-            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
-              <span class="md-flex__ellipsis">
-                <span class="md-footer-nav__direction">
-                  Previous
-                </span>
-                Home
-              </span>
-            </div>
-          </a>
-        
-        
-          <a href="../admin-guide/" title="Admin Guide" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
-            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
-              <span class="md-flex__ellipsis">
-                <span class="md-footer-nav__direction">
-                  Next
-                </span>
-                Admin Guide
-              </span>
-            </div>
-            <div class="md-flex__cell md-flex__cell--shrink">
-              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
-            </div>
-          </a>
-        
-      </nav>
-    </div>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
@@ -478,9 +352,9 @@ This is to avoid the situation where a large family could have a great impact on
       
     </div>
     
-      <script src="../assets/javascripts/application.583bbe55.js"></script>
+      <script src="../../assets/javascripts/application.583bbe55.js"></script>
       
-      <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
+      <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
       
     
     

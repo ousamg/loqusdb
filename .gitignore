@@ -1,6 +1,0 @@
-_book/
-.cache/
-build/
-dist/
-*.egg*/
-*.py[cod]
