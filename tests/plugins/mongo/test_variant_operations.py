@@ -214,17 +214,18 @@ class TestRemoveSV:
 
     def test_remove_one_of_two_SV(self, mongo_adapter, duptandem_variant, case_obj):
 
+        SMALL_OVERLAP = 0.5
         # GIVEN a database poulated with one SV
         db = mongo_adapter.db
         formated_variant = build_variant(duptandem_variant, case_obj=case_obj, case_id=case_obj['case_id'])
-        mongo_adapter.add_structural_variant(formated_variant)
+        mongo_adapter.add_structural_variant(formated_variant, overlap=SMALL_OVERLAP)
 
         # Add second of same variant, changing the start and end position slightly
         formated_variant_ = copy.deepcopy(formated_variant)
         formated_variant_['pos'] = formated_variant_['pos']+2
         formated_variant_['end'] = formated_variant_['end']-1
         formated_variant_['case_id'] = 'case_2'
-        mongo_adapter.add_structural_variant(formated_variant_)
+        mongo_adapter.add_structural_variant(formated_variant_, overlap=SMALL_OVERLAP)
 
         # This should correspond to one structural variant document
         mongo_svs = list(db.structural_variant.find())

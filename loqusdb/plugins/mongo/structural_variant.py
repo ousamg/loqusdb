@@ -8,10 +8,17 @@ from loqusdb.models import Identity
 from pymongo import (ASCENDING, DESCENDING, UpdateOne)
 
 LOG = logging.getLogger(__name__)
+UPDATE_CLUSTER = False
+OVERLAP = 1.0
 
 class SVMixin():
 
-    def add_structural_variant(self, variant, max_window = 3000):
+    def add_structural_variant(self,
+                               variant,
+                               max_window = 3000,
+                               overlap = OVERLAP,
+                               use_ci = False,
+                               update_cluster = UPDATE_CLUSTER):
         """Add a variant to the structural variants collection
 
         The process of adding an SV variant differs quite a bit from the
@@ -28,8 +35,9 @@ class SVMixin():
         Args:
             variant (dict): A variant dictionary
             max_window(int): Specify the maximum window size for large svs
-
-
+            overlap(float): Minimal fraction of overlap of variants in a cluster
+            use_ci(bool): Use CIPOS and CIEND from VCF to estimate accuracy 
+            update_cluster(bool): Adapt cluster border to data
                                         -
                                       -   -
                                     -       -
@@ -56,8 +64,16 @@ class SVMixin():
                 'length': 0,
                 'sv_type': variant['sv_type'],
                 'families': [],
-
+                'start_len': variant['sv_len'],
+                'start_pos': variant['pos'],
+                'variance_sum': 0,
             }
+
+            ci_pos, ci_end = self._set_ci(variant, max_window, overlap, use_ci)
+            cluster.update(
+                self._set_sv_borders(variant['pos'], ci_pos, variant['end'], ci_end)
+            )
+
             # Insert variant to get a _id
             _id = self.db.structural_variant.insert_one(cluster).inserted_id
 
@@ -68,6 +84,7 @@ class SVMixin():
             # If the variant is already added for this case we continue
             # One case will only give duplicated information
             if case_id in cluster['families']:
+                assert False, cluster
                 return
             else:
                 # Insert the new case in the beginning of array
@@ -97,6 +114,17 @@ class SVMixin():
                                                              end_mean=end_mean,
                                                              max_window=max_window)
 
+        set_properties = {
+                'families': cluster['families'],
+                'length': cluster_len,
+            }
+        if update_cluster:
+            set_properties.update(
+                self._set_sv_borders(pos_mean,
+                                     [-interval_size, interval_size],
+                                     end_mean,
+                                     [-interval_size, interval_size])
+            )
 
         res = self.db.structural_variant.find_one_and_update(
             {'_id': cluster['_id']},
@@ -105,16 +133,10 @@ class SVMixin():
                     'observations': 1,
                     'pos_sum': variant['pos'],
                     'end_sum': variant['end'],
+                    'variance_sum': (cluster['start_pos']-variant['pos'])**2
                 },
 
-                '$set': {
-                    'pos_left': max(pos_mean - interval_size, 0),
-                    'pos_right': pos_mean + interval_size,
-                    'end_left': max(end_mean - interval_size, 0),
-                    'end_right': end_mean + interval_size,
-                    'families': cluster['families'],
-                    'length': cluster_len,
-                }
+                '$set': set_properties
             }
         )
 
@@ -125,7 +147,8 @@ class SVMixin():
 
         return
 
-    def delete_structural_variant(self, variant, max_window = 3000):
+    def delete_structural_variant(self, variant, max_window = 3000,
+                                  update_cluster = UPDATE_CLUSTER):
 
         # This will return the cluster most similar to variant or None
         cluster = self.get_structural_variant(variant)
@@ -160,6 +183,18 @@ class SVMixin():
                                                              end_mean=end_mean,
                                                              max_window=max_window)
 
+        set_properties = {
+                'families': cluster['families'],
+                'length': cluster_len,
+            }
+        if update_cluster:
+            set_properties.update(
+                self._set_sv_borders(pos_mean,
+                                     [-interval_size, interval_size],
+                                     end_mean,
+                                     [-interval_size, interval_size])
+            )
+
         res = self.db.structural_variant.find_one_and_update(
             {'_id': cluster['_id']},
             {
@@ -167,16 +202,10 @@ class SVMixin():
                     'observations': -1,
                     'pos_sum': -variant['pos'],
                     'end_sum': -variant['end'],
+                    'variance_sum': -(cluster['start_pos']-variant['pos'])**2,
                 },
 
-                '$set': {
-                    'pos_left': max(pos_mean - interval_size, 0),
-                    'pos_right': pos_mean + interval_size,
-                    'end_left': max(end_mean - interval_size, 0),
-                    'end_right': end_mean + interval_size,
-                    'families': cluster['families'],
-                    'length': cluster_len,
-                }
+                '$set': set_properties
             }
         )
 
@@ -187,6 +216,37 @@ class SVMixin():
 
         return
 
+    def _set_sv_borders(self, pos, ci_pos, end, ci_end):
+
+        pos_left = max(pos+ci_pos[0], 0)
+        pos_right = pos+ci_pos[1]
+        end_left = max(end+ci_end[0], 0)
+        end_right = end+ci_end[1]
+
+        sv_borders = {
+            'pos_left': pos_left,
+            'pos_right': pos_right,
+            'end_left': end_left,
+            'end_right': end_right
+        }
+
+        return sv_borders
+
+    def _set_ci(self, variant, max_window, overlap, use_ci):
+        ci_pos = [-max_window, max_window]
+        
+        if overlap:
+            ci_pos[0] = -min(-ci_pos[0], int(variant['sv_len']/overlap-variant['sv_len']))
+            ci_pos[1] = min(ci_pos[1], int(variant['sv_len']-variant['sv_len']*overlap))
+
+        ci_end = [ci_pos[0], ci_pos[1]]
+        if use_ci:
+            ci_pos[0] = -min(-ci_pos[0], -variant['ci_pos'][0])
+            ci_pos[1] = min(ci_pos[1], variant['ci_pos'][1])
+            ci_end[0] = -min(-ci_end[0], -variant['ci_end'][0])
+            ci_end[1] = min(ci_end[1], variant['ci_end'][1])
+        return ci_pos, ci_end
+        
     def _update_sv_metrics(self, sv_type, pos_mean, end_mean, max_window):
 
         """
