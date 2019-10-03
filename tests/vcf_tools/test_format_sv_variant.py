@@ -1,5 +1,6 @@
 from pprint import pprint as pp
 from loqusdb.build_models import build_variant
+from loqusdb.build_models.variant import BND_LEN
 
 def test_format_indel(del_variant, case_obj):
     ## GIVEN a SV deletion
@@ -119,7 +120,7 @@ def test_format_translocation(translocation_variant, case_obj):
     assert formated_variant['end_chrom'] == '11'
     assert formated_variant['pos'] == variant.POS
     assert formated_variant['end'] == 119123896
-    assert formated_variant['sv_len'] == float('inf')
+    assert formated_variant['sv_len'] == BND_LEN
     
     
     assert formated_variant['ref'] == variant.REF

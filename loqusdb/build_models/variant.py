@@ -9,6 +9,8 @@ from loqusdb.constants import (PAR,GENOTYPE_MAP,CHROM_TO_INT)
 
 LOG = logging.getLogger(__name__)
 
+BND_LEN = 0
+
 Position = namedtuple('Position', 'chrom pos')
 
 # These are coordinate for the pseudo autosomal regions in GRCh37
@@ -91,6 +93,8 @@ def get_coords(variant):
         'sv_type': None,
         'pos': None,
         'end': None,
+        'cipos': None,
+        'ciend': None
     }
     chrom = variant.CHROM
     if chrom.startswith(('chr', 'CHR', 'Chr')):
@@ -117,6 +121,11 @@ def get_coords(variant):
     else:
         sv_len = end - pos
 
+    cipos = variant.INFO.get('CIPOS', [0, 0])
+    coordinates['cipos'] = cipos
+    ciend = variant.INFO.get('CIEND', [0, 0])
+    coordinates['ciend'] = ciend
+    
     # Translocations will sometimes have a end chrom that differs from chrom
     if sv_type == 'BND':
         other_coordinates = alt.strip('ACGTN[]').split(':')
@@ -127,13 +136,14 @@ def get_coords(variant):
         end = int(other_coordinates[1])
 
         #Set 'infinity' to length if translocation
-        sv_len = float('inf')
+        #Or length to 0 as e.g. Manta
+        sv_len = BND_LEN
 
     # Insertions often have length 0 in VCF
-    if (sv_len == 0 and alt != '<INS>'):
+    if (sv_len == 0 and alt != '<INS>' and sv_type == 'INS'):
         sv_len = len(alt)
 
-    if (pos == end) and (sv_len > 0) and sv_len != float('inf'):
+    if (pos+sv_len != end) and (sv_len > 0) and sv_len != float('inf'):
         end = pos + sv_len
 
     position = Position(chrom, pos)
@@ -154,6 +164,7 @@ def get_coords(variant):
     coordinates['sv_type'] = sv_type
 
     return coordinates
+
 
 def build_variant(variant, case_obj, case_id=None, gq_treshold=None):
     """Return a Variant object
@@ -242,6 +253,8 @@ def build_variant(variant, case_obj, case_id=None, gq_treshold=None):
             hemizygote = found_hemizygote,
             is_sv = sv,
             id_column = variant.ID,
+            cipos=coordinates['cipos'],
+            ciend=coordinates['ciend']
         )
 
     return variant_obj

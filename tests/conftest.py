@@ -350,12 +350,12 @@ def del_variant(request):
         chrom='1',
         ref='G',
         alt='<DEL>',
-        pos=1285001,
+        pos=1285000,
         end=1287000,
         var_type='sv',
         info_dict={
             'END': 1287000,
-            'SVLEN': -20000,
+            'SVLEN': -2000,
             'SVTYPE': 'DEL'
         }
     )
